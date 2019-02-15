@@ -7,8 +7,8 @@ from tkinter import *
 import xml.etree.ElementTree as ET
 # for math
 import math
-
-
+import struct
+import numpy as np
 
 # some constants about the earth
 MPERLAT = 111000 # meters per degree of latitude, approximately
@@ -16,6 +16,7 @@ MPERLON = MPERLAT * math.cos(42*math.pi/180) # meters per degree longitude at 42
 
 WINWIDTH = 200
 WINHEIGHT = 200
+decoded = []
 
 class MyWin(Frame):
     '''
@@ -82,7 +83,7 @@ class MyWin(Frame):
 Here are some other functions we will need:
 '''
 
-def read_elevations(filename):
+def read_elevations(efilename):
     ''' This reads in an HGT file of elevation data.
     It is a little tricky since the file is a series of
     raw 2-byte signed shorts.
@@ -90,7 +91,7 @@ def read_elevations(filename):
     args: filename - the name of an HGT file
     '''
 
-    efile = open(efilename)
+    efile = open(efilename,"rb")
     estr = efile.read()
     elevs = []
     for spot in range(0,len(estr),2):
@@ -98,6 +99,8 @@ def read_elevations(filename):
         # fact that the data file is given in big-endian format which is unusual these days...
         # you may of course load this into some other data structure as you see best
         elevs.append(struct.unpack('>h',estr[spot:spot+2])[0])
+    for i in range (len(elevs)):
+        print (elevs[i])
 
 def read_xml(filename):
     '''
@@ -120,17 +123,26 @@ def read_xml(filename):
                 if subitem.tag == 'tag' and subitem.get('k') == 'name':
                     # also note names are Unicode strings, depends on your system how
                     # they will look, I don't care too much.
-                    print ("Name is " +  subitem.get('v'))
+                    #print ("Name is " +  subitem.get('v'))
                     break
-
+                
+                
 def main():
-    read_xml("map_RAILWAYREGION.osm")
+    read_xml("map_HARMONYDATA SET.osm")
 
     master = Tk()
     line = (60,10,70,20)
     circle = (120,150,130,160)
     thewin = MyWin(master,line,circle)
-
+    
+    
+    
+    #f = open("n43_w114_1arc_v2.bil", "r")
+    #a = np.fromfile(f, dtype=np.uint32)
+    
+    #print(a)
+    read_elevations("n43_w114_1arc_v2.bil")
+    
     # in Python you have to start the event loop yourself:
     mainloop()
 

@@ -99,8 +99,7 @@ def read_elevations(efilename):
         # fact that the data file is given in big-endian format which is unusual these days...
         # you may of course load this into some other data structure as you see best
         elevs.append(struct.unpack('>h',estr[spot:spot+2])[0])
-    for i in range (len(elevs)):
-        print (elevs[i])
+    return elevs
 
 def read_xml(filename):
     '''
@@ -120,15 +119,26 @@ def read_xml(filename):
             # so instead of looking for a tag named 'name', we look for a tag
             # named 'tag' with a key inside it called 'name'
             for subitem in item:
-                if subitem.tag == 'tag' and subitem.get('k') == 'name':
+                if subitem.tag == 'tag' and subitem.get('k') == 'lon':
                     # also note names are Unicode strings, depends on your system how
                     # they will look, I don't care too much.
-                    #print ("Name is " +  subitem.get('v'))
+                    
+                    print ("Name is " +  subitem.get('v'))
                     break
-                
+    return root
+
+def analyzeXML(root):
+    for item in root:
+        if item.tag == 'way':
+            for subitem in item:
+                if subitem.tag == 'tag' and subitem.get('k') == 'lon':
+                    print ("Name is " +  subitem.get('v'))
+                    break 
                 
 def main():
-    read_xml("map_HARMONYDATA SET.osm")
+    root = read_xml("map.osm")
+    
+    #analyzeXML(root)
 
     master = Tk()
     line = (60,10,70,20)
@@ -141,7 +151,7 @@ def main():
     #a = np.fromfile(f, dtype=np.uint32)
     
     #print(a)
-    read_elevations("n43_w114_1arc_v2.bil")
+    eleves = read_elevations("n43_w114_1arc_v2.bil")
     
     # in Python you have to start the event loop yourself:
     mainloop()

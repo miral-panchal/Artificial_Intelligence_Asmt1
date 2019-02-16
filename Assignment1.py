@@ -99,8 +99,8 @@ def read_elevations(efilename):
         # fact that the data file is given in big-endian format which is unusual these days...
         # you may of course load this into some other data structure as you see best
         elevs.append(struct.unpack('>h',estr[spot:spot+2])[0])
-    for i in range (len(elevs)):
-        print (elevs[i])
+    #for i in range (len(elevs)):
+        #print (elevs[i])
 
 def read_xml(filename):
     '''
@@ -114,17 +114,37 @@ def read_xml(filename):
 
     for item in root:
         # we will need nodes and ways, here we look at a way:
-        if item.tag == 'way':
+        if item.tag == 'node':
+            latitude = item.get('lat')
+            longitude = item.get('lon')
+        
+            for items in item:
+                
+                if items.tag == 'tag' and items.get('k') == 'name':
+                    
+                    name = items.get('v');
+                    print("name: " + name )
+                    print("lat: " + latitude)
+                    print("long: " + longitude)
+                    
+        
+        
+        #if item.tag == 'way':
             # in OSM data, most info we want is stored as key-value pairs
             # inside the XML element (not as the usual XML elements) -
             # so instead of looking for a tag named 'name', we look for a tag
             # named 'tag' with a key inside it called 'name'
-            for subitem in item:
-                if subitem.tag == 'tag' and subitem.get('k') == 'name':
+            #for subitem in item:    #for each tag in the tag xml
+                
+                #print('id here: ' + item.get('id'));
+                #if subitem.tag == 'tag' and subitem.get('k') == 'name':
+                #if subitem.tag == 'nd':
+                    #print(subitem.get('ref'));            
                     # also note names are Unicode strings, depends on your system how
                     # they will look, I don't care too much.
                     #print ("Name is " +  subitem.get('v'))
-                    break
+                    #break
+                    ###
                 
                 
 def main():
